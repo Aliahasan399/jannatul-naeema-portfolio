@@ -176,11 +176,11 @@ tiltCards.forEach(card => {
   });
 });
 
-/* ========== CONTACT FORM HANDLING ========== */
+/* ========== CONTACT FORM — ACTUAL EMAIL SUBMISSION ========== */
 const contactForm = document.getElementById('contactForm');
 
 if (contactForm) {
-  contactForm.addEventListener('submit', function(e) {
+  contactForm.addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const name = document.getElementById('name').value.trim();
@@ -198,24 +198,40 @@ if (contactForm) {
       return;
     }
 
-    const mailtoLink = `mailto:jannatulnaeema72@gmail.com?subject=${encodeURIComponent(subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`)}`;
-
     const btn = contactForm.querySelector('button[type="submit"]');
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     btn.disabled = true;
 
-    setTimeout(() => {
-      window.location.href = mailtoLink;
-      btn.innerHTML = '<i class="fas fa-check"></i> Message Ready!';
-      btn.disabled = false;
+    try {
+      const formData = new FormData(contactForm);
+      const res = await fetch(contactForm.action, {
+        method: 'POST',
+        body: formData
+      });
 
-      setTimeout(() => {
-        btn.innerHTML = originalText;
+      if (res.ok) {
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> Sent Successfully!';
+        showFormMessage(
+          '✅ Your message has been sent to Jannatul Naeema. She will get back to you soon.',
+          'success'
+        );
         contactForm.reset();
-        showFormMessage('Your message is ready to send! Your email client will open.', 'success');
-      }, 2000);
-    }, 800);
+      } else {
+        throw new Error('Server responded with ' + res.status);
+      }
+    } catch (err) {
+      btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Send Failed';
+      showFormMessage(
+        '⚠️ Could not send message. Please try emailing directly: jannatulnaeema72@gmail.com',
+        'error'
+      );
+    }
+
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }, 3000);
   });
 }
 
@@ -244,8 +260,7 @@ function showFormMessage(text, type) {
   `;
 
   contactForm.appendChild(msg);
-
-  setTimeout(() => msg.remove(), 5000);
+  setTimeout(() => msg.remove(), 6000);
 }
 
 /* ========== PARALLAX SHAPES ON MOUSE MOVE ========== */
