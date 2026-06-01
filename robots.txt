@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aliahasan399.github.io/jannatul-naeema-portfolio/sitemap.xml
