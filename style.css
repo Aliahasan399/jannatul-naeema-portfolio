@@ -524,7 +524,6 @@ section {
 
 .about-image-frame {
   width: 320px;
-  height: 420px;
   border-radius: var(--radius-lg);
   background: transparent;
   border: 3px solid #0a1628;
@@ -549,10 +548,8 @@ section {
 .about-photo {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 20%;
-  border-radius: var(--radius-lg);
+  height: auto;
+  border-radius: 18px;
   transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -1577,7 +1574,6 @@ section {
   .about-image-frame {
     width: 100%;
     max-width: 280px;
-    height: 370px;
     margin: 0 auto;
   }
 
@@ -1817,7 +1813,6 @@ section {
 
   .about-image-frame {
     max-width: 220px;
-    height: 300px;
   }
 
   .nav-menu {
