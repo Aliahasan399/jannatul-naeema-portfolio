@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Cup 2022 — Path to Glory</title>
+<style>
+/* =============================================
+   1. CSS VARIABLES & RESET
+   ============================================= */
+:root {
+  --gold: #ffd700;
+  --gold-light: #ffed4a;
+  --gold-dark: #b8860b;
+  --teal: #00f0ff;
+  --bg: #060a18;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 215, 0, 0.08);
+  --glass: rgba(255, 255, 255, 0.06);
+  --text: #e8e8f0;
+  --text-dim: rgba(255, 255, 255, 0.5);
+  --radius: 14px;
+  --shadow-gold: 0 0 30px rgba(255, 215, 0, 0.15);
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* =============================================
+   2. PARTICLE CANVAS
+   ============================================= */
+#particleCanvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* =============================================
+   3. MAIN CONTAINER
+   ============================================= */
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* =============================================
+   4. HERO SECTION
+   ============================================= */
+.hero {
+  text-align: center;
+  padding: 3rem 0 2rem;
+  position: relative;
+}
+.hero-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  padding: 0.4rem 1.2rem;
+  border-radius: 100px;
+  margin-bottom: 1.5rem;
+  animation: fadeInDown 0.8s ease both;
+}
+.hero h1 {
+  font-size: clamp(2.2rem, 8vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+  animation: shimmerText 4s ease infinite, fadeInUp 1s 0.2s both;
+  filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.3));
+}
+.hero-sub {
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  color: var(--text-dim);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  animation: fadeInUp 1s 0.4s both;
+}
+
+/* =============================================
+   5. TROPHY CSS ART
+   ============================================= */
+.trophy-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.5rem 0 2rem;
+  animation: fadeInUp 1s 0.1s both;
+}
+.trophy {
+  width: 100px;
+  height: 160px;
+  position: relative;
+  filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.4));
+  animation: trophyGlow 3s ease-in-out infinite;
+}
+.trophy-globe {
+  width: 52px;
+  height: 52px;
+  background: radial-gradient(circle at 35% 30%, #fff2a0, #ffd700 40%, #c9950a 70%, #8b6914);
+  border-radius: 50%;
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5), inset 0 -4px 12px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+.trophy-globe::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 10px,
+    rgba(255,255,255,0.08) 10px, rgba(255,255,255,0.08) 11px
+  ),
+  repeating-linear-gradient(
+    90deg, transparent, transparent 10px,
+    rgba(255,255,255,0.08) 10px, rgba(255,255,255,0.08) 11px
+  );
+  z-index: 3;
+}
+.trophy-globe::after {
+  content: '';
+  position: absolute;
+  top: 6px; left: 10px;
+  width: 14px; height: 8px;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.6), transparent);
+  border-radius: 50%;
+  z-index: 4;
+}
+.trophy-figures {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  z-index: 1;
+}
+.trophy-figures::before, .trophy-figures::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 12px;
+  height: 55px;
+  background: linear-gradient(to right, #c9950a, #ffd700, #c9950a);
+  border-radius: 6px 6px 0 0;
+}
+.trophy-figures::before { left: 8px; transform: rotate(-12deg); transform-origin: bottom center; }
+.trophy-figures::after { right: 8px; transform: rotate(12deg); transform-origin: bottom center; }
+.trophy-base {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 22px;
+  background: linear-gradient(180deg, #ffd700, #b8860b, #8b6914);
+  border-radius: 3px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.trophy-base::after {
+  content: 'FIFA';
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #4a3000;
+  text-shadow: 0 1px 0 rgba(255,215,0,0.3);
+}
+.trophy-base::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  width: 58px;
+  height: 6px;
+  background: linear-gradient(180deg, #c9950a, #8b6914);
+  border-radius: 2px 2px 0 0;
+}
+.trophy-rim {
+  position: absolute;
+  top: 62px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 6px;
+  background: linear-gradient(90deg, #8b6914, #ffd700, #c9950a, #ffd700, #8b6914);
+  border-radius: 2px;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(255,215,0,0.3);
+}
+
+/* =============================================
+   6. BRACKET SECTION
+   ============================================= */
+.section-title {
+  text-align: center;
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+  color: var(--text);
+  margin: 3rem 0 2rem;
+  letter-spacing: 1px;
+  position: relative;
+}
+.section-title span {
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0.5rem auto 0;
+}
+
+.bracket {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr 0.7fr 0.7fr;
+  gap: 0.75rem;
+  align-items: stretch;
+  margin: 0 auto;
+  max-width: 1100px;
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+/* Bracket connector SVG */
+.bracket-lines {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.bracket-lines path {
+  stroke: rgba(255, 215, 0, 0.2);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  transition: stroke-dashoffset 1.5s ease;
+}
+.bracket-lines path.drawn {
+  stroke-dashoffset: 0;
+}
+
+.round-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+.round-column .round-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid rgba(255,215,0,0.1);
+  margin-bottom: 0.25rem;
+}
+
+/* =============================================
+   7. MATCH CARDS
+   ============================================= */
+.match-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 215, 0, 0.08);
+  border-radius: var(--radius);
+  padding: 0.5rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+  transform: translateY(20px);
+  position: relative;
+  overflow: hidden;
+}
+.match-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.match-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(255, 215, 0, 0.3);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.15), var(--shadow-gold);
+}
+.match-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.03), transparent);
+  transition: left 0.6s ease;
+}
+.match-card:hover::before {
+  left: 100%;
+}
+.match-card.winner-card {
+  border-color: rgba(255, 215, 0, 0.4);
+  background: rgba(255, 215, 0, 0.06);
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.1);
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.4rem;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+.team-row + .team-row {
+  border-top: 1px solid rgba(255,255,255,0.04);
+  margin-top: 0.2rem;
+  padding-top: 0.45rem;
+}
+.team-row.advancing {
+  background: rgba(255, 215, 0, 0.06);
+}
+.team-flag {
+  font-size: 1.2rem;
+  line-height: 1;
+  width: 1.6rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+.team-name {
+  flex: 1;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.team-score {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  min-width: 1.8rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.team-row.advancing .team-score {
+  color: var(--gold);
+}
+.team-row.winner-row .team-name {
+  color: var(--gold-light);
+}
+
+/* =============================================
+   8. CHAMPION SPOTLIGHT
+   ============================================= */
+.champion-section {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  margin-top: 2rem;
+  position: relative;
+  border-radius: 20px;
+  background: radial-gradient(ellipse at center, rgba(255,215,0,0.05) 0%, transparent 70%);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease;
+  overflow: hidden;
+}
+.champion-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.champion-section::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(from 0deg at 50% 50%, 
+    transparent, rgba(255,215,0,0.03), transparent, 
+    rgba(255,215,0,0.03), transparent);
+  animation: rotateGlow 8s linear infinite;
+}
+.champion-crown { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; animation: bounceCrown 2s ease-in-out infinite; }
+.champion-flag { font-size: 4rem; display: block; margin: 0.5rem 0; filter: drop-shadow(0 0 30px rgba(255,215,0,0.3)); }
+.champion-name {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, #fff2a0, var(--gold), var(--gold-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 4px;
+  position: relative;
+  z-index: 1;
+}
+.champion-sub {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin-top: 0.3rem;
+  position: relative;
+  z-index: 1;
+}
+.champion-stars {
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
+  letter-spacing: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+/* =============================================
+   9. WINNERS TIMELINE
+   ============================================= */
+.history-section {
+  margin-top: 3rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease 0.3s;
+}
+.history-section.visible { opacity: 1; transform: translateY(0); }
+.winners-scroll {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding: 1rem 0.5rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.winners-scroll::-webkit-scrollbar { height: 4px; }
+.winners-scroll::-webkit-scrollbar-track { background: transparent; }
+.winners-scroll::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.2); border-radius: 4px; }
+.winner-chip {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid rgba(255,215,0,0.08);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  cursor: default;
+  min-width: 72px;
+}
+.winner-chip:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(255,215,0,0.2);
+  transform: translateY(-2px);
+}
+.winner-chip .chip-year {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.winner-chip .chip-flag { font-size: 1.3rem; }
+.winner-chip .chip-name {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.winner-chip.chip-current {
+  border-color: var(--gold);
+  background: rgba(255,215,0,0.08);
+  box-shadow: 0 0 20px rgba(255,215,0,0.1);
+}
+
+/* =============================================
+   10. MODAL
+   ============================================= */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal-content {
+  background: linear-gradient(145deg, #0c1225, #060a18);
+  border: 1px solid rgba(255,215,0,0.15);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  position: relative;
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 60px rgba(255,215,0,0.1);
+}
+.modal-overlay.active .modal-content {
+  transform: scale(1) translateY(0);
+}
+.modal-close {
+  position: absolute;
+  top: 1rem; right: 1.2rem;
+  font-size: 1.2rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: color 0.3s;
+  padding: 0.2rem;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--text); }
+.modal-flag { font-size: 4rem; text-align: center; margin-bottom: 0.5rem; }
+.modal-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.modal-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+.modal-stat {
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 0.7rem;
+  text-align: center;
+}
+.modal-stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.modal-stat-label {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0.2rem;
+}
+
+/* =============================================
+   11. KEYFRAME ANIMATIONS
+   ============================================= */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmerText {
+  0%, 100% { filter: drop-shadow(0 0 40px rgba(255,215,0,0.3)); }
+  50% { filter: drop-shadow(0 0 60px rgba(255,215,0,0.6)); }
+}
+@keyframes trophyGlow {
+  0%, 100% { filter: drop-shadow(0 0 40px rgba(255,215,0,0.3)) translateY(0); }
+  50% { filter: drop-shadow(0 0 70px rgba(255,215,0,0.6)) translateY(-4px); }
+}
+@keyframes bounceCrown {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+@keyframes rotateGlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes confettiFall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* =============================================
+   12. CONFETTI OVERLAY
+   ============================================= */
+.confetti-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: -10px;
+  animation: confettiFall linear forwards;
+}
+
+/* =============================================
+   13. RESPONSIVE
+   ============================================= */
+@media (max-width: 900px) {
+  .bracket {
+    grid-template-columns: 1.2fr 1fr 0.8fr 0.7fr;
+    gap: 0.5rem;
+  }
+  .team-name { font-size: 0.7rem; }
+  .team-flag { font-size: 1rem; width: 1.3rem; }
+}
+@media (max-width: 650px) {
+  .bracket {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+  }
+  .round-column:nth-child(3),
+  .round-column:nth-child(4) {
+    margin-top: 1rem;
+  }
+  .bracket {
+    grid-template-areas:
+      "qf1 qf2"
+      "qf3 qf4"
+      "sf1 sf2"
+      "final champion";
+    grid-template-columns: 1fr 1fr;
+  }
+  .round-column:nth-child(1) { grid-area: qf1; }
+  .round-column:nth-child(2) { grid-area: qf2; }
+  .round-column:nth-child(3) { grid-area: sf1; }
+  .round-column:nth-child(4) { grid-area: final; }
+  .champion-section { grid-column: 1 / -1; margin-top: 1rem; }
+  .trophy { width: 70px; height: 120px; }
+  .trophy-globe { width: 38px; height: 38px; top: 12px; }
+  .trophy-figures { top: 38px; width: 45px; height: 45px; }
+  .trophy-figures::before, .trophy-figures::after { height: 38px; width: 9px; }
+  .trophy-base { width: 52px; height: 18px; }
+  .trophy-rim { width: 36px; top: 46px; height: 4px; }
+  .match-card { padding: 0.3rem; }
+  .team-row { padding: 0.25rem 0.3rem; }
+  .team-name { font-size: 0.65rem; }
+  .team-score { font-size: 0.65rem; min-width: 1.3rem; }
+}
+@media (max-width: 420px) {
+  main { padding: 1rem 0.8rem; }
+  .bracket { gap: 0.3rem; }
+  .team-flag { font-size: 0.85rem; width: 1.1rem; }
+  .team-name { font-size: 0.55rem; letter-spacing: 0; }
+  .team-score { font-size: 0.55rem; min-width: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Particle Canvas -->
+<canvas id="particleCanvas"></canvas>
+
+<!-- Main Content -->
+<main>
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-badge">FIFA World Cup • Qatar 2022</div>
+    <h1>PATH TO GLORY</h1>
+    <p class="hero-sub">The knockout stage that crowned champions</p>
+    <div class="trophy-container">
+      <div class="trophy">
+        <div class="trophy-globe"></div>
+        <div class="trophy-figures"></div>
+        <div class="trophy-rim"></div>
+        <div class="trophy-base"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Bracket -->
+  <h2 class="section-title"><span>Knockout</span> Bracket</h2>
+
+  <div class="bracket" id="bracket">
+    <!-- SVG Connector Lines -->
+    <svg class="bracket-lines" id="bracketLines" viewBox="0 0 1000 500" preserveAspectRatio="none"></svg>
+
+    <!-- Round 1: Quarter Finals -->
+    <div class="round-column" data-round="1">
+      <div class="round-label">Quarter-finals</div>
+
+      <div class="match-card" data-match="qf1" data-team1="netherlands" data-team2="argentina" data-winner="argentina">
+        <div class="team-row"><span class="team-flag">🇳🇱</span><span class="team-name">Netherlands</span><span class="team-score">2 (3)</span></div>
+        <div class="team-row advancing winner-row"><span class="team-flag">🇦🇷</span><span class="team-name">Argentina</span><span class="team-score">2 (4)</span></div>
+      </div>
+
+      <div class="match-card" data-match="qf2" data-team1="france" data-team2="england" data-winner="france">
+        <div class="team-row advancing winner-row"><span class="team-flag">🇫🇷</span><span class="team-name">France</span><span class="team-score">2</span></div>
+        <div class="team-row"><span class="team-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="team-name">England</span><span class="team-score">1</span></div>
+      </div>
+
+      <div class="match-card" data-match="qf3" data-team1="croatia" data-team2="brazil" data-winner="croatia">
+        <div class="team-row advancing winner-row"><span class="team-flag">🇭🇷</span><span class="team-name">Croatia</span><span class="team-score">1 (4)</span></div>
+        <div class="team-row"><span class="team-flag">🇧🇷</span><span class="team-name">Brazil</span><span class="team-score">1 (2)</span></div>
+      </div>
+
+      <div class="match-card" data-match="qf4" data-team1="morocco" data-team2="portugal" data-winner="morocco">
+        <div class="team-row advancing winner-row"><span class="team-flag">🇲🇦</span><span class="team-name">Morocco</span><span class="team-score">1</span></div>
+        <div class="team-row"><span class="team-flag">🇵🇹</span><span class="team-name">Portugal</span><span class="team-score">0</span></div>
+      </div>
+    </div>
+
+    <!-- Round 2: Semi Finals -->
+    <div class="round-column" data-round="2">
+      <div class="round-label">Semi-finals</div>
+
+      <div class="match-card" data-match="sf1" data-team1="argentina" data-team2="croatia" data-winner="argentina">
+        <div class="team-row advancing winner-row"><span class="team-flag">🇦🇷</span><span class="team-name">Argentina</span><span class="team-score">3</span></div>
+        <div class="team-row"><span class="team-flag">🇭🇷</span><span class="team-name">Croatia</span><span class="team-score">0</span></div>
+      </div>
+
+      <div class="match-card" data-match="sf2" data-team1="france" data-team2="morocco" data-winner="france">
+        <div class="team-row advancing winner-row"><span class="team-flag">🇫🇷</span><span class="team-name">France</span><span class="team-score">2</span></div>
+        <div class="team-row"><span class="team-flag">🇲🇦</span><span class="team-name">Morocco</span><span class="team-score">0</span></div>
+      </div>
+    </div>
+
+    <!-- Round 3: Final -->
+    <div class="round-column" data-round="3">
+      <div class="round-label">Final</div>
+
+      <div class="match-card winner-card" data-match="final" data-team1="argentina" data-team2="france" data-winner="argentina">
+        <div class="team-row advancing winner-row"><span class="team-flag">🇦🇷</span><span class="team-name">Argentina</span><span class="team-score">3 (4)</span></div>
+        <div class="team-row"><span class="team-flag">🇫🇷</span><span class="team-name">France</span><span class="team-score">3 (2)</span></div>
+      </div>
+    </div>
+
+    <!-- Round 4: Champion -->
+    <div class="round-column" data-round="4">
+      <div class="round-label">Champion</div>
+
+      <div class="match-card winner-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem 0.5rem;gap:0.3rem;">
+        <div style="font-size:2rem;">🏆</div>
+        <div style="font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,#fff2a0,#ffd700,#b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Argentina</div>
+        <div style="font-size:0.65rem;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;">3rd Title</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Champion Spotlight -->
+  <section class="champion-section" id="championSpotlight">
+    <span class="champion-crown">👑</span>
+    <span class="champion-flag">🇦🇷</span>
+    <div class="champion-name">CAMPEONES DEL MUNDO</div>
+    <div class="champion-sub">Argentina • 2022 FIFA World Cup Champions</div>
+    <div class="champion-stars">⭐ ⭐ ⭐</div>
+  </section>
+
+  <!-- History Timeline -->
+  <section class="history-section" id="historySection">
+    <h2 class="section-title"><span>World Cup</span> Winners</h2>
+    <div class="winners-scroll" id="winnersScroll">
+      <div class="winner-chip"><span class="chip-year">1930</span><span class="chip-flag">🇺🇾</span><span class="chip-name">Uruguay</span></div>
+      <div class="winner-chip"><span class="chip-year">1934</span><span class="chip-flag">🇮🇹</span><span class="chip-name">Italy</span></div>
+      <div class="winner-chip"><span class="chip-year">1938</span><span class="chip-flag">🇮🇹</span><span class="chip-name">Italy</span></div>
+      <div class="winner-chip"><span class="chip-year">1950</span><span class="chip-flag">🇺🇾</span><span class="chip-name">Uruguay</span></div>
+      <div class="winner-chip"><span class="chip-year">1954</span><span class="chip-flag">🇩🇪</span><span class="chip-name">W. Germany</span></div>
+      <div class="winner-chip"><span class="chip-year">1958</span><span class="chip-flag">🇧🇷</span><span class="chip-name">Brazil</span></div>
+      <div class="winner-chip"><span class="chip-year">1962</span><span class="chip-flag">🇧🇷</span><span class="chip-name">Brazil</span></div>
+      <div class="winner-chip"><span class="chip-year">1966</span><span class="chip-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="chip-name">England</span></div>
+      <div class="winner-chip"><span class="chip-year">1970</span><span class="chip-flag">🇧🇷</span><span class="chip-name">Brazil</span></div>
+      <div class="winner-chip"><span class="chip-year">1974</span><span class="chip-flag">🇩🇪</span><span class="chip-name">W. Germany</span></div>
+      <div class="winner-chip"><span class="chip-year">1978</span><span class="chip-flag">🇦🇷</span><span class="chip-name">Argentina</span></div>
+      <div class="winner-chip"><span class="chip-year">1982</span><span class="chip-flag">🇮🇹</span><span class="chip-name">Italy</span></div>
+      <div class="winner-chip"><span class="chip-year">1986</span><span class="chip-flag">🇦🇷</span><span class="chip-name">Argentina</span></div>
+      <div class="winner-chip"><span class="chip-year">1990</span><span class="chip-flag">🇩🇪</span><span class="chip-name">W. Germany</span></div>
+      <div class="winner-chip"><span class="chip-year">1994</span><span class="chip-flag">🇧🇷</span><span class="chip-name">Brazil</span></div>
+      <div class="winner-chip"><span class="chip-year">1998</span><span class="chip-flag">🇫🇷</span><span class="chip-name">France</span></div>
+      <div class="winner-chip"><span class="chip-year">2002</span><span class="chip-flag">🇧🇷</span><span class="chip-name">Brazil</span></div>
+      <div class="winner-chip"><span class="chip-year">2006</span><span class="chip-flag">🇮🇹</span><span class="chip-name">Italy</span></div>
+      <div class="winner-chip"><span class="chip-year">2010</span><span class="chip-flag">🇪🇸</span><span class="chip-name">Spain</span></div>
+      <div class="winner-chip"><span class="chip-year">2014</span><span class="chip-flag">🇩🇪</span><span class="chip-name">Germany</span></div>
+      <div class="winner-chip"><span class="chip-year">2018</span><span class="chip-flag">🇫🇷</span><span class="chip-name">France</span></div>
+      <div class="winner-chip chip-current"><span class="chip-year">2022</span><span class="chip-flag">🇦🇷</span><span class="chip-name">Argentina</span></div>
+    </div>
+  </section>
+
+  <!-- Footer touch -->
+  <div style="text-align:center;margin-top:3rem;font-size:0.7rem;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;opacity:0.5;">
+    ⚽ Who will lift it next? • World Cup 2026
+  </div>
+</main>
+
+<!-- Modal -->
+<div class="modal-overlay" id="teamModal">
+  <div class="modal-content">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-flag" id="modalFlag">🇦🇷</div>
+    <div class="modal-title" id="modalTitle">Argentina</div>
+    <div class="modal-stats" id="modalStats"></div>
+  </div>
+</div>
+
+<script>
+/* =============================================
+   TEAM DATA
+   ============================================= */
+const teamData = {
+  argentina: {
+    flag: '🇦🇷', name: 'Argentina', titles: 3, finals: 6, best: 'Champion (1978, 1986, 2022)',
+    result2022: 'Champion', fifaRank: 3
+  },
+  france: {
+    flag: '🇫🇷', name: 'France', titles: 2, finals: 4, best: 'Champion (1998, 2018)',
+    result2022: 'Runner-up', fifaRank: 4
+  },
+  croatia: {
+    flag: '🇭🇷', name: 'Croatia', titles: 0, finals: 2, best: 'Runner-up (2018)',
+    result2022: '3rd Place', fifaRank: 12
+  },
+  morocco: {
+    flag: '🇲🇦', name: 'Morocco', titles: 0, finals: 0, best: '4th Place (2022)',
+    result2022: '4th Place', fifaRank: 22
+  },
+  netherlands: {
+    flag: '🇳🇱', name: 'Netherlands', titles: 0, finals: 3, best: 'Runner-up (1974, 1978, 2010)',
+    result2022: 'Quarter-finals', fifaRank: 8
+  },
+  england: {
+    flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', name: 'England', titles: 1, finals: 1, best: 'Champion (1966)',
+    result2022: 'Quarter-finals', fifaRank: 5
+  },
+  brazil: {
+    flag: '🇧🇷', name: 'Brazil', titles: 5, finals: 7, best: 'Champion (1958, 1962, 1970, 1994, 2002)',
+    result2022: 'Quarter-finals', fifaRank: 1
+  },
+  portugal: {
+    flag: '🇵🇹', name: 'Portugal', titles: 0, finals: 0, best: '3rd Place (1966)',
+    result2022: 'Quarter-finals', fifaRank: 9
+  }
+};
+
+/* =============================================
+   PARTICLE SYSTEM
+   ============================================= */
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let animId;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+class Particle {
+  constructor() { this.reset(); this.y = Math.random() * canvas.height; }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = -10;
+    this.size = Math.random() * 2.5 + 1;
+    this.speedY = Math.random() * 0.3 + 0.1;
+    this.speedX = (Math.random() - 0.5) * 0.2;
+    this.opacity = Math.random() * 0.5 + 0.2;
+    this.golden = Math.random() > 0.3;
+    this.twinkleSpeed = Math.random() * 0.02 + 0.005;
+    this.twinkleOffset = Math.random() * Math.PI * 2;
+  }
+  update(time) {
+    this.y += this.speedY;
+    this.x += this.speedX + Math.sin(time * 0.0003 + this.twinkleOffset) * 0.1;
+    const twinkle = Math.sin(time * this.twinkleSpeed + this.twinkleOffset) * 0.3 + 0.7;
+    this.currentOpacity = this.opacity * twinkle;
+    if (this.y > canvas.height + 10) this.reset();
+    if (this.x < -10) this.x = canvas.width + 10;
+    if (this.x > canvas.width + 10) this.x = -10;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    if (this.golden) {
+      ctx.fillStyle = `rgba(255, 215, 0, ${this.currentOpacity})`;
+      ctx.shadowColor = 'rgba(255, 215, 0, 0.4)';
+    } else {
+      ctx.fillStyle = `rgba(255, 255, 255, ${this.currentOpacity * 0.6})`;
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.2)';
+    }
+    ctx.shadowBlur = 6;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+function initParticles() {
+  particles = [];
+  const count = Math.min(120, Math.floor(canvas.width * canvas.height / 12000));
+  for (let i = 0; i < count; i++) particles.push(new Particle());
+}
+
+function animateParticles(time) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(time); p.draw(); });
+  animId = requestAnimationFrame(animateParticles);
+}
+
+resizeCanvas();
+initParticles();
+animateParticles(0);
+window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+
+/* =============================================
+   CONNECTOR LINES (SVG)
+   ============================================= */
+function drawConnectorLines() {
+  const svg = document.getElementById('bracketLines');
+  const bracket = document.getElementById('bracket');
+  if (!bracket) return;
+
+  const cards = bracket.querySelectorAll('.match-card');
+  if (cards.length < 7) return;
+
+  const bRect = bracket.getBoundingClientRect();
+  const w = bRect.width;
+  const h = bRect.height;
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.style.width = w + 'px';
+  svg.style.height = h + 'px';
+
+  const paths = [];
+
+  // Get center positions of relevant cards
+  const qf1 = bracket.querySelector('[data-match="qf1"]');
+  const qf2 = bracket.querySelector('[data-match="qf2"]');
+  const qf3 = bracket.querySelector('[data-match="qf3"]');
+  const qf4 = bracket.querySelector('[data-match="qf4"]');
+  const sf1 = bracket.querySelector('[data-match="sf1"]');
+  const sf2 = bracket.querySelector('[data-match="sf2"]');
+  const finalMatch = bracket.querySelector('[data-match="final"]');
+
+  if (!qf1 || !qf2 || !qf3 || !qf4 || !sf1 || !sf2 || !finalMatch) return;
+
+  function getCenterY(el) {
+    const r = el.getBoundingClientRect();
+    return r.top - bRect.top + r.height / 2;
+  }
+  function getRightX(el) {
+    const r = el.getBoundingClientRect();
+    return r.left - bRect.left + r.width;
+  }
+  function getLeftX(el) {
+    const r = el.getBoundingClientRect();
+    return r.left - bRect.left;
+  }
+
+  const colGap = 0; // will compute from positions
+
+  // QF → SF connections
+  const pairs = [
+    [qf1, sf1], [qf2, sf1],
+    [qf3, sf2], [qf4, sf2]
+  ];
+  pairs.forEach(([from, to]) => {
+    const x1 = getRightX(from);
+    const x2 = getLeftX(to);
+    const y1 = getCenterY(from);
+    const y2 = getCenterY(to);
+    const midX = (x1 + x2) / 2;
+    // Path: right from QF → horizontal to midpoint → vertical to SF Y → horizontal to SF
+    const d = `M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}`;
+    paths.push(d);
+  });
+
+  // SF → Final
+  const sfY1 = getCenterY(sf1);
+  const sfY2 = getCenterY(sf2);
+  const finalY = getCenterY(finalMatch);
+  const sfRightX = getRightX(sf1);
+  const finalLeftX = getLeftX(finalMatch);
+  const midX2 = (sfRightX + finalLeftX) / 2;
+  // Path: SF1 right → mid → down to final Y
+  const d1 = `M ${sfRightX} ${sfY1} L ${midX2} ${sfY1} L ${midX2} ${finalY} L ${finalLeftX} ${finalY}`;
+  // Path: SF2 right → mid → up to final Y
+  const d2 = `M ${sfRightX} ${sfY2} L ${midX2} ${sfY2} L ${midX2} ${finalY} L ${finalLeftX} ${finalY}`;
+  paths.push(d1, d2);
+
+  // Final → Champion
+  const finalRightX = getRightX(finalMatch);
+  const champCol = bracket.querySelector('.round-column[data-round="4"]');
+  const champCard = champCol ? champCol.querySelector('.match-card') : null;
+  if (champCard) {
+    const champLeftX = getLeftX(champCard);
+    const midX3 = (finalRightX + champLeftX) / 2;
+    const d3 = `M ${finalRightX} ${finalY} L ${midX3} ${finalY} L ${midX3} ${finalY} L ${champLeftX} ${finalY}`;
+    paths.push(d3);
+  }
+
+  // Clear and draw
+  svg.innerHTML = '';
+  paths.forEach(d => {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    svg.appendChild(path);
+  });
+
+  // Animate lines in
+  requestAnimationFrame(() => {
+    svg.querySelectorAll('path').forEach((path, i) => {
+      setTimeout(() => path.classList.add('drawn'), i * 200);
+    });
+  });
+}
+
+/* =============================================
+   INTERSECTION OBSERVER (scroll animations)
+   ============================================= */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (entry.target.classList.contains('champion-section')) {
+        launchConfetti();
+      }
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+// Observe match cards
+document.querySelectorAll('.match-card').forEach(card => observer.observe(card));
+// Observe champion section
+const champSection = document.getElementById('championSpotlight');
+if (champSection) observer.observe(champSection);
+// Observe history section
+const historySection = document.getElementById('historySection');
+if (historySection) observer.observe(historySection);
+
+// Stagger card animations
+document.querySelectorAll('.match-card').forEach((card, i) => {
+  card.style.transitionDelay = `${(i * 0.08)}s`;
+});
+
+/* =============================================
+   CONFETTI SYSTEM
+   ============================================= */
+function launchConfetti() {
+  const container = document.createElement('div');
+  container.className = 'confetti-container';
+  document.body.appendChild(container);
+
+  const colors = ['#ffd700', '#ffed4a', '#ff6b6b', '#00f0ff', '#ff8c00', '#ff69b4', '#7fff00', '#ff4500'];
+  const shapes = ['■', '●', '▲', '★', '♦'];
+
+  for (let i = 0; i < 120; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.color = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.fontSize = `${Math.random() * 10 + 6}px`;
+    piece.style.animationDuration = `${Math.random() * 2 + 1.5}s`;
+    piece.style.animationDelay = `${Math.random() * 1.5}s`;
+    piece.style.opacity = Math.random() * 0.7 + 0.3;
+    container.appendChild(piece);
+  }
+
+  setTimeout(() => container.remove(), 5000);
+}
+
+/* =============================================
+   MODAL SYSTEM
+   ============================================= */
+const modal = document.getElementById('teamModal');
+const modalClose = document.getElementById('modalClose');
+const modalFlag = document.getElementById('modalFlag');
+const modalTitle = document.getElementById('modalTitle');
+const modalStats = document.getElementById('modalStats');
+
+function openModal(teamKey) {
+  const data = teamData[teamKey];
+  if (!data) return;
+  modalFlag.textContent = data.flag;
+  modalTitle.textContent = data.name;
+  modalStats.innerHTML = `
+    <div class="modal-stat"><div class="modal-stat-value">${data.titles}</div><div class="modal-stat-label">Titles</div></div>
+    <div class="modal-stat"><div class="modal-stat-value">${data.finals}</div><div class="modal-stat-label">Finals</div></div>
+    <div class="modal-stat"><div class="modal-stat-value">#${data.fifaRank}</div><div class="modal-stat-label">FIFA Rank</div></div>
+    <div class="modal-stat"><div class="modal-stat-value" style="font-size:0.75rem;">${data.result2022}</div><div class="modal-stat-label">2022 Result</div></div>
+  `;
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+// Click handlers for team rows
+document.querySelectorAll('.team-row').forEach(row => {
+  row.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const matchCard = row.closest('.match-card');
+    if (!matchCard) return;
+    const teamNameEl = row.querySelector('.team-name');
+    if (!teamNameEl) return;
+    const name = teamNameEl.textContent.trim().toLowerCase();
+    // Match to team key
+    const key = Object.keys(teamData).find(k => name.includes(k) || k.includes(name));
+    if (key) openModal(key);
+  });
+});
+
+// Also allow clicking the champion card
+document.querySelector('.round-column[data-round="4"] .match-card')?.addEventListener('click', () => {
+  openModal('argentina');
+});
+
+/* =============================================
+   DRAW CONNECTOR LINES ON LOAD
+   ============================================= */
+// Wait for layout, then draw
+setTimeout(drawConnectorLines, 300);
+window.addEventListener('resize', drawConnectorLines);
+
+/* =============================================
+   WINNER TIMELINE AUTO-SCROLL
+   ============================================= */
+// Scroll the winners timeline to show 2022
+const scrollContainer = document.getElementById('winnersScroll');
+if (scrollContainer) {
+  const current = scrollContainer.querySelector('.chip-current');
+  if (current) {
+    setTimeout(() => {
+      current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }, 1000);
+  }
+}
+
+/* =============================================
+   KEYBOARD / TOUCH ARROW NAV ON TIMELINE
+   ============================================= */
+// (optional, not needed for core experience)
+
+console.log('🏆 World Cup — Path to Glory loaded!');
+</script>
+</body>
+</html>
